@@ -26,12 +26,16 @@ function App() {
   async function vec2str() {
     if (vector.length !== 0) {
       const str2arr = vector.split(', ').map(str => Number(str));
-      console.log(str2arr);
+      for (const elem of str2arr) {
+        if (!Number.isInteger(elem)) {
+          setResSentence('Format error!');
+          return;
+        }
+      }
       const res = await axios.post(
         "https://main-gpt-2-server-gkswjdzz.endpoint.ainize.ai/postprocess",
         [ str2arr ]
       );
-      console.log(res.data[0]);
       setResSentence(res.data[0].text);
     } else {
       setResSentence('');
@@ -40,19 +44,22 @@ function App() {
 
   return (
     <div className="App">
-      <a href={'https://ainize.ai/gkswjdzz/gpt-2-server?branch=main'}>
-        https://ainize.ai/gkswjdzz/gpt-2-server?branch=main
-      </a>
+      <div className="AppHeader">
+        {`API Reference: `}
+        <a href={'https://ainize.ai/gkswjdzz/gpt-2-server?branch=main'}>
+          https://ainize.ai/gkswjdzz/gpt-2-server?branch=main
+        </a>
+      </div>
       <div className="AppBody">
         <div className="TextareaDiv">
-          <div>{"문장 -> Vector"}</div>
+          <div className="Title">{"Sentence -> Vector"}</div>
           <textarea className="Textarea"
             value={sentence}
             onChange={async (e) => {
               setSentence(e.target.value);
             }}
             type="text" />
-          <Button onClick={str2vec}>
+          <Button variant="contained" color="primary" onClick={str2vec}>
             <TranslateIcon />
           </Button>
           <textarea className="Textarea"
@@ -61,14 +68,15 @@ function App() {
             type="text" />
         </div>
         <div className="TextareaDiv">
-          <div>{"Vector -> 문장"}</div>
+          <div className="Title">{"Vector -> Sentence"}</div>
           <textarea className="Textarea"
+            placeholder={"3666, 1438, 318, 685, 3672, 286"}
             value={vector}
             onChange={async (e) => {
               setVector(e.target.value);
             }}
             type="text" />
-          <Button onClick={vec2str}>
+          <Button variant="contained" color="primary" onClick={vec2str}>
             <TranslateIcon />
           </Button>
           <textarea className="Textarea"
